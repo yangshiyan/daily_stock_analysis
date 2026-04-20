@@ -20,6 +20,11 @@ A股自选股智能分析系统 - 环境验证测试
 
 """
 import os
+from dotenv import load_dotenv
+
+# 这行代码会把 .env 文件里的变量注入到 os.environ 中
+load_dotenv()
+
 # Proxy config - controlled by USE_PROXY env var, off by default.
 # Set USE_PROXY=true in .env if you need a local proxy (e.g. mainland China).
 # GitHub Actions always skips this regardless of USE_PROXY.
@@ -29,6 +34,11 @@ if os.getenv("GITHUB_ACTIONS") != "true" and os.getenv("USE_PROXY", "false").low
     proxy_url = f"http://{proxy_host}:{proxy_port}"
     os.environ["http_proxy"] = proxy_url
     os.environ["https_proxy"] = proxy_url
+    print(f"DEBUG: 代理已开启，正在使用 {proxy_url}") # 加这一行
+    
+    #proxy_port = os.getenv("PROXY_PORT", "7890")
+    #os.environ["HTTPS_PROXY"] = "http://127.0.0.1:7890"
+    #os.environ["HTTP_PROXY"] = "http://127.0.0.1:7890"
 
 import argparse
 import logging
@@ -175,7 +185,8 @@ def view_database():
     return True
 
 
-def test_data_fetch(stock_code: str = "600519"):
+#def test_data_fetch(stock_code: str = "600519"):
+def test_data_fetch(stock_code: str = "002925"):
     """测试数据获取"""
     print_header("3. 数据获取测试")
     
@@ -225,17 +236,17 @@ def test_llm():
     print(f"  备选模型: {config.gemini_model_fallback}")
     
     # 检查网络连接
-    print_section("网络连接检查")
-    try:
-        import socket
-        socket.setdefaulttimeout(10)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("generativelanguage.googleapis.com", 443))
-        print(f"  ✓ 可以连接到 Google API 服务器")
-    except Exception as e:
-        print(f"  ✗ 无法连接到 Google API 服务器: {e}")
-        print(f"  提示: 请检查网络连接或配置代理")
-        print(f"  提示: 可以设置环境变量 HTTPS_PROXY=http://your-proxy:port")
-        return False
+    #print_section("网络连接检查")
+    #try:
+    #    import socket
+    #    socket.setdefaulttimeout(10)
+    #    socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("generativelanguage.googleapis.com", 443))
+    #    print(f"  ✓ 可以连接到 Google API 服务器")
+    #except Exception as e:
+    #    print(f"  ✗ 无法连接到 Google API 服务器: {e}")
+    #    print(f"  提示: 请检查网络连接或配置代理")
+    #    print(f"  提示: 可以设置环境变量 HTTPS_PROXY=http://your-proxy:port")
+    #    return False
     
     analyzer = GeminiAnalyzer()
     
